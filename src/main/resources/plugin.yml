@@ -8,6 +8,10 @@ commands:
     description: The main simple sorter command.
     usage: /<command>
     permission: simplesorter.usage
+  simplesorter:
+    description: The main simple sorter command.
+    usage: /<command>
+    permission: simplesorter.usage
 permissions:
   simplesorter.*:
     description: Allows access to everything within the plugin

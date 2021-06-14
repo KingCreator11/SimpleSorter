@@ -16,6 +16,8 @@ limitations under the License.
 
 package com.kingcreator11.simplesorter;
 
+import com.kingcreator11.simplesorter.Commands.*;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -24,11 +26,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SimpleSorter extends JavaPlugin {
 
 	/**
+	 * The command handler used for this plugin instance
+	 */
+	private CommandHandler commandHandler = new CommandHandler(this);
+
+	/**
 	 * Called when the plugin is enabled - startup process
 	 */
 	@Override
 	public void onEnable() {
-		
+		// Init commands
+		this.getCommand("ss").setExecutor(commandHandler);
+		this.getCommand("simplesorter").setExecutor(commandHandler);
+
+		// Init sub commands
+		this.commandHandler.addSubCommand("help", new HelpCommand(this));
+		this.commandHandler.addSubCommand("create", new CreateCommand(this));
+		this.commandHandler.addSubCommand("delete", new DeleteCommand(this));
+		this.commandHandler.addSubCommand("list", new ListCommand(this));
+		this.commandHandler.addSubCommand("setinput", new SetInputCommand(this));
+		this.commandHandler.addSubCommand("removeinput", new RemoveInputCommand(this));
+		this.commandHandler.addSubCommand("setinvalid", new SetInvalidCommand(this));
+		this.commandHandler.addSubCommand("removeinvalid", new RemoveInvalidCommand(this));
+		this.commandHandler.addSubCommand("setshulkerinput", new SetShulkerInputCommand(this));
+		this.commandHandler.addSubCommand("removeshulkerinput", new RemoveShulkerInputCommand(this));
+		this.commandHandler.addSubCommand("sort", new SortCommand(this));
+		this.commandHandler.addSubCommand("sortname", new SortNameCommand(this));
+		this.commandHandler.addSubCommand("removesorter", new RemoveSorterCommand(this));
 	}
 
 	/**
