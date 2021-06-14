@@ -1,0 +1,24 @@
+main: com.kingcreator11.simplesorter.SimpleSorter
+name: SimpleSorter
+version: 1.0
+description: A simple lag-less spigot sorter plugin.
+prefix: SimpleSorter
+commands:
+  ss:
+    description: The main simple sorter command.
+    usage: /<command>
+    permission: simplesorter.usage
+permissions:
+  simplesorter.*:
+    description: Allows access to everything within the plugin
+    default: op
+    children:
+      simplesorter.usage:
+        description: The main usage permission for the plugin, allows players to use the majority of the commands and create sorters
+        default: op
+      simplesorter.admin:
+        description: Allows for certain moderator/admin commands within the plugin such as deleting other player's sorters
+        default: op
+      simplesorter.shulkers:
+        description: Allows for an individual to create a shulker based storage system
+        default: op

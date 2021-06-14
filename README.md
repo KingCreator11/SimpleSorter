@@ -41,7 +41,7 @@ All commands within the plugin are listed below along with the permission requir
 | Command | Permission | Description |
 |---------|------------|-------------|
 | `/ss help` | `simplesorter.usage` | The help command for the plugin, lists the usage for every command along with a small description |
-| `/ss create <name>` | `simplesorter.usage` and the number of sorters the player currently has must be below `simplesorter.count.n` n in the permission. | Creates a new simple sorter named `<name>`, the name must be unique for the player. |
+| `/ss create <name>` | `simplesorter.usage` and the number of sorters the player currently has must be below `simplesorter.count.n` n in the permission. | Creates a new simple sorter named `<name>`, the name must be unique for the player. If the player has no `simplesorter.count.n` permission then it will be assumed the player can have infinite sorters. |
 | `/ss delete <name>` | `simplesorter.usage` | Deletes a simple sorter named `<name>`. |
 | `/ss delete <ign>:<name>` | `simplesorter.admin` | Deletes a simple sorter named `<name>` for player named `<ign>` |
 | `/ss list` | `simplesorter.usage` | Lists the simple sorters you own |
