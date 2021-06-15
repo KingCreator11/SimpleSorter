@@ -122,7 +122,7 @@ public class HelpCommand extends SubCommand {
 			// Do nothing - just give the first page of the help
 		}
 
-		for (int i = (page-1)*5; i < page*5; i++) {
+		for (int i = (page-1)*5; i < (page*5 > infoSubset.size() ? infoSubset.size() : page*5); i++) {
 			CommandInfo cmdInfo = infoSubset.get(i);
 			message += "§3/ss "+cmdInfo.usage + " §7: §f"+cmdInfo.description + "\n";
 		}

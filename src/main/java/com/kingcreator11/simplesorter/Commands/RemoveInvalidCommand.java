@@ -18,7 +18,10 @@ package com.kingcreator11.simplesorter.Commands;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.RayTraceResult;
 
 /**
  * The remove invalid sub command
@@ -40,6 +43,32 @@ public class RemoveInvalidCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+		RayTraceResult result = player.rayTraceBlocks(10);
+
+		if (result == null) {
+			sender.sendMessage("§cPlease point at a container to remove from the sorter");
+			return;
+		}
+
+		Block block = result.getHitBlock();
+		
+		if (block == null || !this.blockIsSorterContainer(block)) {
+			sender.sendMessage("§cPlease point at a container to remove from the sorter");
+			return;
+		}
+
+		if (this.plugin.invalidManager.removeInvalidContainer(block.getLocation(), player.getUniqueId().toString())) {
+			sender.sendMessage("§2Successfully removed the container from the sorter");
+		}
+		else {
+			sender.sendMessage("§cUnable to remove the container from the sorter due to a technical error");
+		}
 	}
 }

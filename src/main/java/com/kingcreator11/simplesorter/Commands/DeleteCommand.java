@@ -18,7 +18,10 @@ package com.kingcreator11.simplesorter.Commands;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * The delete sub command
@@ -40,6 +43,59 @@ public class DeleteCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+		
+		if (argument.contains(":")) {
+
+			if (!sender.hasPermission("simplesorter.admin")) {
+				sender.sendMessage("§cInsufficient Privileges to use this command");
+				return;
+			}
+
+			String[] args = argument.split("\\:");
+			if (args.length != 2 || args[0] == null || args[1] == null || args[0].equals("") || args[1].equals("")) {
+				sender.sendMessage("§cInvalid argument, usage is /ss delete <ign>:<name>");
+				return;
+			}
+
+			String ign = args[0];
+			String name = args[1];
+
+			OfflinePlayer player = Bukkit.getOfflinePlayer(ign);
+			
+			if (player == null || !player.hasPlayedBefore()) {
+				sender.sendMessage("§cPlayer not found, did you mispell the ign?");
+				return;
+			}
+
+			String playerUUID = player.getUniqueId().toString();
+
+			if (this.plugin.sorterManager.deleteSorter(name, playerUUID)) {
+				sender.sendMessage("§2Successfully deleted the sorter!");
+			}
+			else {
+				sender.sendMessage("§cWas unable to delete the sorter for technical reasons");
+			}
+
+			return;
+		}
+
+		if (argument.equals("")) {
+			sender.sendMessage("§cPlease provide the name of the sorter you wish to delete");
+			return;
+		}
+
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command.");
+			return;
+		}
+
+		Player player = (Player) sender;
+
+		if (this.plugin.sorterManager.deleteSorter(argument, player.getUniqueId().toString())) {
+			sender.sendMessage("§2Successfully deleted the sorter!");
+		}
+		else {
+			sender.sendMessage("§cWas unable to delete the sorter for technical reasons");
+		}
 	}
 }

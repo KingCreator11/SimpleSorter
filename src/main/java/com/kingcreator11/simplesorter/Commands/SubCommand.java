@@ -19,6 +19,11 @@ package com.kingcreator11.simplesorter.Commands;
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -83,6 +88,16 @@ public abstract class SubCommand extends SimpleSorterBase {
 				return false;
 
 		return true;
+	}
+
+	/**
+	 * Checks whether or not a block is a valid container for sorting
+	 * @param block
+	 * @return
+	 */
+	protected boolean blockIsSorterContainer(Block block) {
+		BlockState state = block.getState();
+		return state instanceof Chest || state instanceof ShulkerBox || state instanceof Barrel;
 	}
 
 	/**

@@ -100,6 +100,11 @@ public class CommandHandler extends SimpleSorterBase implements CommandExecutor,
 			return true;
 		}
 
+		if (!subCommand.hasPerms(sender)) {
+			sender.sendMessage("§4Insufficient Privileges");
+			return true;
+		}
+
 		try {
 			subCommand.executeCommand(args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[]{}, sender);
 		}

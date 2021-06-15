@@ -16,6 +16,9 @@
 
 package com.kingcreator11.simplesorter.Database;
 
+import java.util.List;
+import java.util.Map;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 
@@ -25,6 +28,11 @@ import org.bukkit.Location;
  * The database manager for the input container storage
  */
 public class InputContainerManager extends SimpleSorterBase {
+
+	/**
+	 * Maps online player uuids to a list of all the locations of the input containers in their sorters
+	 */
+	public Map<String, List<Location>> inputLocations;
 
 	/**
 	 * Creates a new input manager
@@ -52,6 +60,24 @@ public class InputContainerManager extends SimpleSorterBase {
 	 * @return Whether or not the container was successfully removed
 	 */
 	public boolean removeInput(Location location, String playerUUID) {
+		return false;
+	}
+
+	/**
+	 * Loads the input containers for a player
+	 * @param playerUUID
+	 * @return Whether or not the input containers were loaded
+	 */
+	public boolean loadInputs(String playerUUID) {
+		return false;
+	}
+
+	/**
+	 * Unloads the input containers for a player
+	 * @param playerUUID
+	 * @return Whether or not the input containers were unloaded
+	 */
+	public boolean unloadInputs(String playerUUID) {
 		return false;
 	}
 }

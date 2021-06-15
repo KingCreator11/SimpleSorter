@@ -17,7 +17,7 @@ limitations under the License.
 package com.kingcreator11.simplesorter;
 
 import com.kingcreator11.simplesorter.Commands.*;
-import com.kingcreator11.simplesorter.Database.DatabaseManager;
+import com.kingcreator11.simplesorter.Database.*;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,7 +31,35 @@ public class SimpleSorter extends JavaPlugin {
 	 */
 	private CommandHandler commandHandler = new CommandHandler(this);
 
-	private DatabaseManager dbManager = new DatabaseManager(this);
+	/**
+	 * The main database manager
+	 */
+	public DatabaseManager dbManager = new DatabaseManager(this);
+	
+	/**
+	 * The database manager instance for InputContainers 
+	 */
+	public InputContainerManager inputManager = new InputContainerManager(this);
+	
+	/**
+	 * The database manager instance for InvalidContainers 
+	 */
+	public InvalidContainerManager invalidManager = new InvalidContainerManager(this);
+	
+	/**
+	 * The database manager instance for ShulkerInputs 
+	 */
+	public ShulkerInputManager shulkerManager = new ShulkerInputManager(this);
+	
+	/**
+	 * The database manager instance for SorterContainers 
+	 */
+	public SorterContainerManager sorterContainerManager = new SorterContainerManager(this);
+	
+	/**
+	 * The database manager instance for Sorters 
+	 */
+	public SorterManager sorterManager = new SorterManager(this);
 
 	/**
 	 * Called when the plugin is enabled - startup process

@@ -16,9 +16,14 @@
 
 package com.kingcreator11.simplesorter.Commands;
 
+import java.util.List;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * The list sub command
@@ -40,6 +45,51 @@ public class ListCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+		
+		if (!argument.isEmpty()) {
+			if (!sender.hasPermission("simplesorter.admin")) {
+				sender.sendMessage("§cInsufficient Privileges to use this command");
+				return;
+			}
+
+			OfflinePlayer player = Bukkit.getOfflinePlayer(argument);
+			
+			if (player == null || !player.hasPlayedBefore()) {
+				sender.sendMessage("§cPlayer not found, did you mispell the ign?");
+				return;
+			}
+
+			String playerUUID = player.getUniqueId().toString();
+			List<String> sorters = this.plugin.sorterManager.listSorters(playerUUID);
+
+			printSorters(sender, sorters);
+
+			return;
+		}
+
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+		printSorters(sender, this.plugin.sorterManager.listSorters(player.getUniqueId().toString()));
+	}
+
+	private void printSorters(CommandSender sender, List<String> sorters) {
+		if (sorters == null) {
+			sender.sendMessage("§cWas unable to list the sorters due to technical reasons");
+			return;
+		}
+
+		String message = "§cCurrently Owned Sorters:\n§2";
+
+		for (String sorter : sorters) {
+			message += sorter;
+			if (!sorter.equals(sorters.get(sorters.size() - 1)))
+				message += ", ";
+		}
+
+		sender.sendMessage(message);
 	}
 }

@@ -18,7 +18,10 @@ package com.kingcreator11.simplesorter.Commands;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.RayTraceResult;
 
 /**
  * The set invalid sub command
@@ -40,6 +43,37 @@ public class SetInvalidCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+		RayTraceResult result = player.rayTraceBlocks(10);
+
+		if (result == null) {
+			sender.sendMessage("§cPlease point at a container to set as the invalid items container for the sorter");
+			return;
+		}
+
+		Block block = result.getHitBlock();
+		
+		if (block == null || !this.blockIsSorterContainer(block)) {
+			sender.sendMessage("§cPlease point at a container to set as the invalid items container for the sorter");
+			return;
+		}
+
+		if (argument.isEmpty()) {
+			sender.sendMessage("§cCommand usage /ss setinvalid <name>");
+			return;
+		}
+
+		if (this.plugin.invalidManager.addInvalidContainer(block.getLocation(), argument, player.getUniqueId().toString())) {
+			sender.sendMessage("§2Successfully added invalid output container");
+		}
+		else {
+			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+		}
 	}
 }

@@ -18,7 +18,10 @@ package com.kingcreator11.simplesorter.Commands;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.RayTraceResult;
 
 /**
  * The set shulker input sub command
@@ -30,7 +33,7 @@ public class SetShulkerInputCommand extends SubCommand {
 	 * @param plugin
 	 */
 	public SetShulkerInputCommand(SimpleSorter plugin) {
-		super(plugin, new String[] {"simplesorter.usage"}, SubCommandType.argString);
+		super(plugin, new String[] {"simplesorter.shulkers"}, SubCommandType.argString);
 	}
 
 	/**
@@ -40,6 +43,37 @@ public class SetShulkerInputCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+		RayTraceResult result = player.rayTraceBlocks(10);
+
+		if (result == null) {
+			sender.sendMessage("§cPlease point at a container to set as the shulker input for the sorter");
+			return;
+		}
+
+		Block block = result.getHitBlock();
+		
+		if (block == null || !this.blockIsSorterContainer(block)) {
+			sender.sendMessage("§cPlease point at a container to set as the shulker input for the sorter");
+			return;
+		}
+
+		if (argument.isEmpty()) {
+			sender.sendMessage("§cCommand usage /ss setshulkerinput <name>");
+			return;
+		}
+
+		if (this.plugin.shulkerManager.addShulkerInput(block.getLocation(), argument, player.getUniqueId().toString())) {
+			sender.sendMessage("§2Successfully added shulker input container");
+		}
+		else {
+			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+		}
 	}
 }

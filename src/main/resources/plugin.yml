@@ -1,6 +1,7 @@
 main: com.kingcreator11.simplesorter.SimpleSorter
 name: SimpleSorter
 version: 1.0
+api-version: 1.16
 description: A simple lag-less spigot sorter plugin.
 prefix: SimpleSorter
 commands:

@@ -19,6 +19,7 @@ package com.kingcreator11.simplesorter.Commands;
 import com.kingcreator11.simplesorter.SimpleSorter;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * The create sub command
@@ -40,6 +41,31 @@ public class CreateCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+
+		// Name validation
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+
+		if (argument.length() > 30 || argument.length() < 1) {
+			sender.sendMessage("§cThe name provided must be between 1 and 30 characters in length");
+			return;
+		}
+
+		if (!argument.matches("^[a-zA-Z0-9_]+$")) {
+			sender.sendMessage("§cThe name provided may only use english letters, numbers, and underscores.");
+			return;
+		}
+
+		// Name is valid!
+		if (this.plugin.sorterManager.createSorter(argument, player.getUniqueId().toString())) {
+			sender.sendMessage("§2Successfully created new sorter!");
+		}
+		else {
+			sender.sendMessage("§cWe were unable to create the sorter due to a technical error");
+		}
 	}
 }

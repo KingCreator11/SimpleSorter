@@ -18,7 +18,10 @@ package com.kingcreator11.simplesorter.Commands;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.RayTraceResult;
 
 /**
  * The sort sub command
@@ -40,6 +43,44 @@ public class SortCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+		
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("§cOnly players may use this command");
+			return;
+		}
+
+		Player player = (Player) sender;
+		RayTraceResult result = player.rayTraceBlocks(10);
+
+		if (result == null) {
+			sender.sendMessage("§cPlease point at a container to sort");
+			return;
+		}
+
+		Block block = result.getHitBlock();
+		
+		if (block == null || !this.blockIsSorterContainer(block)) {
+			sender.sendMessage("§cPlease point at a container to sort");
+			return;
+		}
+
+		if (argument.isEmpty()) {
+			sender.sendMessage("§cCommand usage /ss sort <name>");
+			return;
+		}
+
+		String item = player.getInventory().getItemInMainHand().getType().getKey().toString();
+
+		if (item.equals("minecraft:air")) {
+			sender.sendMessage("§cPlease hold the item you wish to have sorted");
+			return;
+		}
+
+		if (plugin.sorterContainerManager.addSorterContainer(block.getLocation(), argument, player.getUniqueId().toString(), item)) {
+			sender.sendMessage("§2Successfully added sorter");
+		}
+		else {
+			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+		}
 	}
 }
