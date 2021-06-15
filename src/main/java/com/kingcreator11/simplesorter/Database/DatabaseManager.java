@@ -35,7 +35,7 @@ public class DatabaseManager extends SimpleSorterBase {
 	/**
 	 * The database connection
 	 */
-	private Connection db;
+	public Connection db;
 
 	/**
 	 * Creates a new database manager instance
@@ -84,6 +84,7 @@ public class DatabaseManager extends SimpleSorterBase {
 			"  `x` integer NOT NULL," +
 			"  `y` integer NOT NULL," +
 			"  `z` integer NOT NULL," +
+			"  `world` varchar(50) NOT NULL," +
 			"  `sorterId` integer NOT NULL" +
 			");",
 
@@ -92,6 +93,7 @@ public class DatabaseManager extends SimpleSorterBase {
 			"  `x` integer NOT NULL," +
 			"  `y` integer NOT NULL," +
 			"  `z` integer NOT NULL," +
+			"  `world` varchar(50) NOT NULL," +
 			"  `sorterId` integer NOT NULL" +
 			");",
 
@@ -100,6 +102,7 @@ public class DatabaseManager extends SimpleSorterBase {
 			"  `x` integer NOT NULL," +
 			"  `y` integer NOT NULL," +
 			"  `z` integer NOT NULL," +
+			"  `world` varchar(50) NOT NULL," +
 			"  `sorterId` integer NOT NULL" +
 			");",
 
@@ -108,6 +111,7 @@ public class DatabaseManager extends SimpleSorterBase {
 			"  `x` integer NOT NULL," +
 			"  `y` integer NOT NULL," +
 			"  `z` integer NOT NULL," +
+			"  `world` varchar(50) NOT NULL," +
 			"  `sorterId` integer NOT NULL," +
 			"  `item` varchar(300) NOT NULL" +
 			");",
