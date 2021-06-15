@@ -17,6 +17,7 @@
 package com.kingcreator11.simplesorter.Commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,7 @@ public class CommandHandler extends SimpleSorterBase implements CommandExecutor,
 		}
 
 		try {
-			subCommand.executeCommand(args, sender);
+			subCommand.executeCommand(args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[]{}, sender);
 		}
 		catch (Exception e) {
 			sender.sendMessage("§4Whoops something went wrong! Try a different command and please inform the developers regarding the console output!");

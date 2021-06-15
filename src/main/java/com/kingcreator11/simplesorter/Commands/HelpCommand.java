@@ -16,6 +16,9 @@
 
 package com.kingcreator11.simplesorter.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 
 import org.bukkit.command.CommandSender;
@@ -24,6 +27,67 @@ import org.bukkit.command.CommandSender;
  * The help sub command
  */
 public class HelpCommand extends SubCommand {
+
+	/**
+	 * A helper class to provide the info for a single command
+	 */
+	private class CommandInfo {
+
+		/**
+		 * How the command is to be used
+		 */
+		public String usage;
+
+		/**
+		 * The description of the command
+		 */
+		public String description;
+
+		/**
+		 * The permission required to use this command
+		 */
+		public String permission = "simplesorter.usage";
+
+		/**
+		 * Creates a new command info instance
+		 * @param usage How the command is to be used
+		 * @param description The description of the command
+		 */
+		public CommandInfo(String usage, String description) {
+			this.usage = usage;
+			this.description = description;
+		}
+
+		/**
+		 * Creates a new command info instance
+		 * @param usage How the command is to be used
+		 * @param description The description of the command
+		 * @param permission The permission required to use this command
+		 */
+		public CommandInfo(String usage, String description, String permission) {
+			this.usage = usage;
+			this.description = description;
+			this.permission = permission;
+		}
+	}
+
+	private CommandInfo[] commandInfo = {
+		new CommandInfo("help §9<pagenumber>", "Pulls up this help page"),
+		new CommandInfo("create §9<name>", "Creates a new simple sorter"),
+		new CommandInfo("delete §9<name>", "Deletes a simple sorter"),
+		new CommandInfo("delete §9<ign>§b:§9<name>", "Deletes a player's simple sorter", "simplesorter.admin"),
+		new CommandInfo("list", "Lists the simple sorters you own"),
+		new CommandInfo("list §9<ign>", "Lists a player's simple sorters", "simplesorter.admin"),
+		new CommandInfo("setinput §9<name>", "Sets an input chest for a sorter"),
+		new CommandInfo("removeinput", "Removes an input chest for a sorter"),
+		new CommandInfo("setinvalid §9<name>", "Sets an invalid items chest for a sorter"),
+		new CommandInfo("removeinvalid", "Removes an invalid items chest for a sorter"),
+		new CommandInfo("setshulkerinput §9<name>", "Converts a sorter to a shulker based sorter and sets the empty shulker input chest", "simplesorter.shulkers"),
+		new CommandInfo("removeshulkerinput", "Converts a sorter back to a normal item sorter and removes the shulker input chest"),
+		new CommandInfo("sort §9<name>", "Creates a sorter for the held item"),
+		new CommandInfo("sortname §9<name>", "Creates a sorter for the held item based on the item name"),
+		new CommandInfo("removesorter", "Removes a sorter chest")
+	};
 
 	/**
 	 * Creates a new Help command instance
@@ -40,6 +104,31 @@ public class HelpCommand extends SubCommand {
 	 */
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
-		// TODO - implement this
+		String message = "§6>------ §cSimple Sorter Help §6------<\n";
+		int page = 1;
+		List<CommandInfo> infoSubset = new ArrayList<>();
+
+		for (int i = 0; i < commandInfo.length; i++)
+			if (sender.hasPermission(commandInfo[i].permission))
+				infoSubset.add(commandInfo[i]);
+
+		int numPages = (int) Math.ceil((double) infoSubset.size() / 5.0);
+
+		try {
+			page = Integer.parseInt(argument);
+			if (page > numPages) page = numPages;
+			if (page < 1) page = 1;
+		}
+		catch (NumberFormatException e) {
+			// Do nothing - just give the first page of the help
+		}
+
+		for (int i = (page-1)*5; i < page*5; i++) {
+			CommandInfo cmdInfo = infoSubset.get(i);
+			message += "§3/ss "+cmdInfo.usage + " §7: §f"+cmdInfo.description + "\n";
+		}
+
+		message += "§6>------ §cPage "+page+" of "+numPages+" §6------<";
+		sender.sendMessage(message);
 	}
 }
