@@ -53,7 +53,6 @@ All commands within the plugin are listed below along with the permission requir
 | `/ss setshulkerinput <name>` | `simplesorter.shulkers` and `simplesorter.usage` | Creates an autopacker for the shulkers in the sorted chests. Will always try adding items to the last unfilled shulker in the sorter chest or will add a new empty shulker if the system cannot find any. There can be multiple shulker input chests and the system will check all for empty shulkers. |
 | `/ss removeshulkerinput` | `simplesorter.usage` | Removes a shulker input and causes the storage to revert to a normal item based storage rather than a shulker based one |
 | `/ss sort <name>` | `simplesorter.usage` | Turns the selected chest into a sorter of the held item. This plugin can also sort certain nonstackables and other items. |
-| `/ss sortname <name>` | `simplesorter.usage` | Turns the selected chest into a sorter of the held item using the held name. This can be useful for things like sorting anything which you'd want sorted by the name of the item such as tools which you'd like to sell, etc. |
 | `/ss removesorter` | `simplesorter.usage` | Removes the given chest from the sorter. |
 
 ## Config

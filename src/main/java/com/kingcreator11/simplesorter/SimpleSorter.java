@@ -17,6 +17,7 @@ limitations under the License.
 package com.kingcreator11.simplesorter;
 
 import com.kingcreator11.simplesorter.Commands.*;
+import com.kingcreator11.simplesorter.Database.DatabaseManager;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,11 +31,17 @@ public class SimpleSorter extends JavaPlugin {
 	 */
 	private CommandHandler commandHandler = new CommandHandler(this);
 
+	private DatabaseManager dbManager = new DatabaseManager(this);
+
 	/**
 	 * Called when the plugin is enabled - startup process
 	 */
 	@Override
 	public void onEnable() {
+
+		// Setup database
+		dbManager.loadDb();
+
 		// Init commands
 		this.getCommand("ss").setExecutor(commandHandler);
 		this.getCommand("simplesorter").setExecutor(commandHandler);
@@ -51,7 +58,6 @@ public class SimpleSorter extends JavaPlugin {
 		this.commandHandler.addSubCommand("setshulkerinput", new SetShulkerInputCommand(this));
 		this.commandHandler.addSubCommand("removeshulkerinput", new RemoveShulkerInputCommand(this));
 		this.commandHandler.addSubCommand("sort", new SortCommand(this));
-		this.commandHandler.addSubCommand("sortname", new SortNameCommand(this));
 		this.commandHandler.addSubCommand("removesorter", new RemoveSorterCommand(this));
 	}
 

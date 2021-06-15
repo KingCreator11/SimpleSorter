@@ -85,7 +85,6 @@ public class HelpCommand extends SubCommand {
 		new CommandInfo("setshulkerinput §9<name>", "Converts a sorter to a shulker based sorter and sets the empty shulker input chest", "simplesorter.shulkers"),
 		new CommandInfo("removeshulkerinput", "Converts a sorter back to a normal item sorter and removes the shulker input chest"),
 		new CommandInfo("sort §9<name>", "Creates a sorter for the held item"),
-		new CommandInfo("sortname §9<name>", "Creates a sorter for the held item based on the item name"),
 		new CommandInfo("removesorter", "Removes a sorter chest")
 	};
 
