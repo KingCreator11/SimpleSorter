@@ -16,10 +16,13 @@
 
 package com.kingcreator11.simplesorter.Commands;
 
+import java.util.List;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 /**
  * The create sub command
@@ -42,14 +45,43 @@ public class CreateCommand extends SubCommand {
 	@Override
 	protected void executeCommand(CommandSender sender, String argument) {
 
-		// Name validation
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("§cOnly players may use this command");
 			return;
 		}
 
 		Player player = (Player) sender;
+		String playerUUID = player.getUniqueId().toString();
+		List<String> sorters = this.plugin.sorterManager.listSorters(playerUUID);
 
+		if (sender.hasPermission("simplesorter.count")) {
+			int highest = 0;
+
+			// Get highest permission in `simplesorter.count.n`
+			for (PermissionAttachmentInfo info : sender.getEffectivePermissions()) {
+				if (!info.getValue())
+					continue;
+				
+				if (info.getPermission().contains("simplesorter.count")) {
+					try {
+						String perm = info.getPermission();
+						String[] sections = perm.split("\\.");
+						int value = Integer.parseInt(sections[sections.length - 1]);
+						if (value > highest) highest = value;
+					}
+					catch (NumberFormatException e) {
+						continue;
+					}
+				}
+			}
+
+			if (sorters.size() >= highest) {
+				sender.sendMessage("§cYou may only have up to "+highest+" sorters. You currently have "+sorters.size());
+				return;
+			}
+		}
+
+		// Name validation
 		if (argument.length() > 30 || argument.length() < 1) {
 			sender.sendMessage("§cThe name provided must be between 1 and 30 characters in length");
 			return;
@@ -60,12 +92,23 @@ public class CreateCommand extends SubCommand {
 			return;
 		}
 
+		boolean sorterExists = false;
+		for (String sorter : sorters)
+			if (sorter.equals(argument))
+				sorterExists = true;
+		
+		if (sorterExists) {
+			sender.sendMessage("§cYou already own a sorter with the same name. Please choose a different name.");
+			return;
+		}
+
 		// Name is valid!
-		if (this.plugin.sorterManager.createSorter(argument, player.getUniqueId().toString())) {
+		String response = this.plugin.sorterManager.createSorter(argument, playerUUID);
+		if (response == null) {
 			sender.sendMessage("§2Successfully created new sorter!");
 		}
 		else {
-			sender.sendMessage("§cWe were unable to create the sorter due to a technical error");
+			sender.sendMessage("§c"+response);
 		}
 	}
 }

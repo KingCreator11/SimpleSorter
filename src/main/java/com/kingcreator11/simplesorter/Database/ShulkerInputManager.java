@@ -16,9 +16,14 @@
 
 package com.kingcreator11.simplesorter.Database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
@@ -41,8 +46,30 @@ public class ShulkerInputManager extends SimpleSorterBase {
 	 * @param playerUUID
 	 * @return Whether or not the input was added
 	 */
-	public boolean addShulkerInput(Location location, String sorter, String playerUUID) {
-		return false;
+	public String addShulkerInput(Location location, String sorter, String playerUUID) {
+		if (this.plugin.sorterManager.doesContainerExist(location))
+			return "A sorter is already using a container at that location";
+
+		try {
+			String sql = "INSERT INTO `shulkerinputchests` (x, y, z, world, sorterId) VALUES (?, ?, ?, ?, ?)";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, (int) location.getX());
+			statement.setInt(2, (int) location.getY());
+			statement.setInt(3, (int) location.getZ());
+			statement.setString(4, location.getWorld().getName());
+			statement.setInt(5, this.plugin.sorterManager.getSorter(playerUUID, sorter).id);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to add container due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			this.plugin.getLogger().warning("Unable to add shulker input at " + location + " for sorter " + sorter
+				+ " for player " + playerUUID);
+			e.printStackTrace();
+			return "Unable to add container due to an errorr";
+		}
 	}
 
 	/**
@@ -51,7 +78,62 @@ public class ShulkerInputManager extends SimpleSorterBase {
 	 * @param playerUUID
 	 * @return Whether or not the container was removed
 	 */
-	public boolean removeShulkerInput(Location location, String playerUUID) {
-		return false;
+	public String removeShulkerInput(Location location, String playerUUID) {
+		DBContainer container = getContainer(location);
+		if (container == null)
+			return "No container found at the location";
+		SorterManager.Sorter sorter = this.plugin.sorterManager.getSorter(container.sorterId);
+		if (!sorter.playerUUID.equals(playerUUID))
+			return "The container at the location does not belongs to someone else's sorter";
+		
+		try {
+			String sql = "DELETE FROM `shulkerinputchests` WHERE id = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, container.id);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to remove input due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return "Unable to remove input due to an errorr";
+		}
+	}
+
+	/**
+	 * Gets the container
+	 * @param location
+	 * @return null if not found
+	 */
+	public DBContainer getContainer(Location location) {
+		try {
+			String sql = "SELECT * FROM `shulkerinputchests` WHERE x = ? AND y = ? AND z = ? AND world = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, (int) location.getX());
+			statement.setInt(2, (int) location.getY());
+			statement.setInt(3, (int) location.getZ());
+			statement.setString(4, location.getWorld().getName());
+
+			ResultSet result = statement.executeQuery();
+			if (result.next()) {
+				DBContainer container = new DBContainer();
+				container.id = result.getInt("id");
+				container.location = new Location(
+					Bukkit.getWorld(result.getString("world")),
+					result.getInt("x"),
+					result.getInt("y"),
+					result.getInt("z")
+				);
+				container.sorterId = result.getInt("sorterId");
+				return container;
+			}
+			else return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

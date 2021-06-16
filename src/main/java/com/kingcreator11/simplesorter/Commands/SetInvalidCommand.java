@@ -69,11 +69,12 @@ public class SetInvalidCommand extends SubCommand {
 			return;
 		}
 
-		if (this.plugin.invalidManager.addInvalidContainer(block.getLocation(), argument, player.getUniqueId().toString())) {
+		String dbresult = this.plugin.invalidManager.addInvalidContainer(block.getLocation(), argument, player.getUniqueId().toString());
+		if (dbresult == null) {
 			sender.sendMessage("§2Successfully added invalid output container");
 		}
 		else {
-			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+			sender.sendMessage("§c"+dbresult);
 		}
 	}
 }

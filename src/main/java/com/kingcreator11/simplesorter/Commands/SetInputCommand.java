@@ -69,11 +69,12 @@ public class SetInputCommand extends SubCommand {
 			return;
 		}
 
-		if (this.plugin.inputManager.addInput(block.getLocation(), argument, player.getUniqueId().toString())) {
+		String dbresult = this.plugin.inputManager.addInput(block.getLocation(), argument, player.getUniqueId().toString());
+		if (dbresult == null) {
 			sender.sendMessage("§2Successfully added input container");
 		}
 		else {
-			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+			sender.sendMessage("§c"+dbresult);
 		}
 	}
 }

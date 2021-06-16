@@ -76,11 +76,12 @@ public class SortCommand extends SubCommand {
 			return;
 		}
 
-		if (plugin.sorterContainerManager.addSorterContainer(block.getLocation(), argument, player.getUniqueId().toString(), item)) {
+		String dbresult = plugin.sorterContainerManager.addSorterContainer(block.getLocation(), argument, player.getUniqueId().toString(), item);
+		if (dbresult == null) {
 			sender.sendMessage("§2Successfully added sorter");
 		}
 		else {
-			sender.sendMessage("§cWas unable to perform this action due to a technical error");
+			sender.sendMessage("§c"+dbresult);
 		}
 	}
 }

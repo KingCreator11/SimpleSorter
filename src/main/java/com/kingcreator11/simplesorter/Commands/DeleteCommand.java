@@ -68,12 +68,13 @@ public class DeleteCommand extends SubCommand {
 			}
 
 			String playerUUID = player.getUniqueId().toString();
+			String response = this.plugin.sorterManager.deleteSorter(name, playerUUID);
 
-			if (this.plugin.sorterManager.deleteSorter(name, playerUUID)) {
+			if (response == null) {
 				sender.sendMessage("§2Successfully deleted the sorter!");
 			}
 			else {
-				sender.sendMessage("§cWas unable to delete the sorter for technical reasons");
+				sender.sendMessage("§c"+response);
 			}
 
 			return;
@@ -90,12 +91,13 @@ public class DeleteCommand extends SubCommand {
 		}
 
 		Player player = (Player) sender;
+		String response = this.plugin.sorterManager.deleteSorter(argument, player.getUniqueId().toString());
 
-		if (this.plugin.sorterManager.deleteSorter(argument, player.getUniqueId().toString())) {
+		if (response == null) {
 			sender.sendMessage("§2Successfully deleted the sorter!");
 		}
 		else {
-			sender.sendMessage("§cWas unable to delete the sorter for technical reasons");
+			sender.sendMessage("§c"+response);
 		}
 	}
 }

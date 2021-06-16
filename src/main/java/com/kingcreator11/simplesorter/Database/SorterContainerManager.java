@@ -16,15 +16,30 @@
 
 package com.kingcreator11.simplesorter.Database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
  * The database manager for the main sorter container storage
  */
 public class SorterContainerManager extends SimpleSorterBase {
+
+	/**
+	 * Represents a single db sorter container
+	 */
+	public class SorterContainer {
+		public int id;
+		public Location location;
+		public int sorterId;
+		public String item;
+	}
 
 	/**
 	 * Creates a new sorter container manager
@@ -42,8 +57,26 @@ public class SorterContainerManager extends SimpleSorterBase {
 	 * @param itemId
 	 * @return Whether or not the sorter was added
 	 */
-	public boolean addSorterContainer(Location location, String sorter, String playerUUID, String itemId) {
-		return false;
+	public String addSorterContainer(Location location, String sorter, String playerUUID, String itemId) {
+		try {
+			String sql = "INSERT INTO `sorterchest` (x, y, z, world, sorterId, item) VALUES (?, ?, ?, ?, ?, ?)";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, (int) location.getX());
+			statement.setInt(2, (int) location.getY());
+			statement.setInt(3, (int) location.getZ());
+			statement.setString(4, location.getWorld().getName());
+			statement.setInt(5, this.plugin.sorterManager.getSorter(playerUUID, sorter).id);
+			statement.setString(6, itemId);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to add sorter due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return "Unable to add input due to an errorr";
+		}
 	}
 
 	/**
@@ -52,7 +85,63 @@ public class SorterContainerManager extends SimpleSorterBase {
 	 * @param playerUUID
 	 * @return Whether or not the sorter was removed
 	 */
-	public boolean removeSorterContainer(Location location, String playerUUID) {
-		return false;
+	public String removeSorterContainer(Location location, String playerUUID) {
+		SorterContainer container = getSorterContainer(location);
+		if (container == null)
+			return "No container found at the location";
+		SorterManager.Sorter sorter = this.plugin.sorterManager.getSorter(container.sorterId);
+		if (!sorter.playerUUID.equals(playerUUID))
+			return "The container at the location does not belongs to someone else's sorter";
+		
+		try {
+			String sql = "DELETE FROM `sorterchest` WHERE id = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, container.id);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to remove sorter due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return "Unable to remove sorter due to an errorr";
+		}
+	}
+
+	/**
+	 * Gets a sorter container given a location
+	 * @param location
+	 * @return null if not found
+	 */
+	public SorterContainer getSorterContainer(Location location) {
+		try {
+			String sql = "SELECT * FROM `sorterchest` WHERE x = ? AND y = ? AND z = ? AND world = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, (int) location.getX());
+			statement.setInt(2, (int) location.getY());
+			statement.setInt(3, (int) location.getZ());
+			statement.setString(4, location.getWorld().getName());
+
+			ResultSet result = statement.executeQuery();
+			if (result.next()) {
+				SorterContainer container = new SorterContainer();
+				container.id = result.getInt("id");
+				container.location = new Location(
+					Bukkit.getWorld(result.getString("world")),
+					result.getInt("x"),
+					result.getInt("y"),
+					result.getInt("z")
+				);
+				container.sorterId = result.getInt("sorterId");
+				container.item = result.getString("item");
+				return container;
+			}
+			else return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

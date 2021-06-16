@@ -64,11 +64,12 @@ public class RemoveInputCommand extends SubCommand {
 			return;
 		}
 
-		if (this.plugin.inputManager.removeInput(block.getLocation(), player.getUniqueId().toString())) {
+		String dbresult = this.plugin.inputManager.removeInput(block.getLocation(), player.getUniqueId().toString());
+		if (dbresult == null) {
 			sender.sendMessage("§2Successfully removed the container from the sorter");
 		}
 		else {
-			sender.sendMessage("§cUnable to remove the container from the sorter due to a technical error");
+			sender.sendMessage("§c"+dbresult);
 		}
 	}
 }
