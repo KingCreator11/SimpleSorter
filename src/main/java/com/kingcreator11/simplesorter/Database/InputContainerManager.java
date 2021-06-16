@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class InputContainerManager extends SimpleSorterBase {
 	/**
 	 * Maps online player uuids to a list of all the locations of the input containers in their sorters
 	 */
-	public Map<String, List<DBContainer>> inputLocations;
+	public Map<String, List<DBContainer>> inputLocations = new HashMap<>();
 
 	/**
 	 * Creates a new input manager
@@ -65,12 +66,31 @@ public class InputContainerManager extends SimpleSorterBase {
 			statement.setInt(2, (int) location.getY());
 			statement.setInt(3, (int) location.getZ());
 			statement.setString(4, location.getWorld().getName());
-			statement.setInt(5, this.plugin.sorterManager.getSorter(playerUUID, sorter).id);
+			SorterManager.Sorter sorterObj = this.plugin.sorterManager.getSorter(playerUUID, sorter);
+			if (sorterObj == null) return "Sorter with that name not found.";
+			statement.setInt(5, sorterObj.id);
 
 			if (statement.executeUpdate() != 1)
 				return "Unable to add input due to an error";
-			else
+			else {
+				List<DBContainer> ptr;
+				if (inputLocations.containsKey(playerUUID))
+					ptr = inputLocations.get(playerUUID);
+				else {
+					ptr = new ArrayList<>();
+					inputLocations.put(playerUUID, ptr);
+				}
+
+				DBContainer container = new DBContainer();
+				container.location = location.clone();
+				ResultSet results = statement.getGeneratedKeys();
+				if (results.next())
+					container.id = (int) results.getLong(1);
+				container.sorterId = sorterObj.id;
+				ptr.add(container);
+
 				return null;
+			}
 		}
 		catch (SQLException e) {
 			e.printStackTrace();

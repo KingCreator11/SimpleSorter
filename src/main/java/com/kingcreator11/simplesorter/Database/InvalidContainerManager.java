@@ -57,7 +57,9 @@ public class InvalidContainerManager extends SimpleSorterBase {
 			statement.setInt(2, (int) location.getY());
 			statement.setInt(3, (int) location.getZ());
 			statement.setString(4, location.getWorld().getName());
-			statement.setInt(5, this.plugin.sorterManager.getSorter(playerUUID, sorter).id);
+			SorterManager.Sorter sorterObj = this.plugin.sorterManager.getSorter(playerUUID, sorter);
+			if (sorterObj == null) return "Sorter with that name not found.";
+			statement.setInt(5, sorterObj.id);
 
 			if (statement.executeUpdate() != 1)
 				return "Unable to add container due to an error";

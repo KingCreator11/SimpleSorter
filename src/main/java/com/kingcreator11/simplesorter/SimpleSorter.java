@@ -18,6 +18,7 @@ package com.kingcreator11.simplesorter;
 
 import com.kingcreator11.simplesorter.Commands.*;
 import com.kingcreator11.simplesorter.Database.*;
+import com.kingcreator11.simplesorter.Listeners.ListenerHandler;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,6 +31,11 @@ public class SimpleSorter extends JavaPlugin {
 	 * The command handler used for this plugin instance
 	 */
 	private CommandHandler commandHandler = new CommandHandler(this);
+
+	/**
+	 * The main events handler
+	 */
+	private ListenerHandler eventsHandler = new ListenerHandler(this);
 
 	/**
 	 * The main database manager
@@ -87,6 +93,9 @@ public class SimpleSorter extends JavaPlugin {
 		this.commandHandler.addSubCommand("removeshulkerinput", new RemoveShulkerInputCommand(this));
 		this.commandHandler.addSubCommand("sort", new SortCommand(this));
 		this.commandHandler.addSubCommand("removesorter", new RemoveSorterCommand(this));
+
+		// Events
+		getServer().getPluginManager().registerEvents(eventsHandler, this);
 	}
 
 	/**

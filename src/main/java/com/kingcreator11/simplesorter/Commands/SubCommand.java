@@ -23,7 +23,6 @@ import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -97,7 +96,7 @@ public abstract class SubCommand extends SimpleSorterBase {
 	 */
 	protected boolean blockIsSorterContainer(Block block) {
 		BlockState state = block.getState();
-		return state instanceof Chest || state instanceof ShulkerBox || state instanceof Barrel;
+		return state instanceof Chest || state instanceof Barrel;
 	}
 
 	/**

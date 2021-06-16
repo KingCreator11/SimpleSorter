@@ -158,6 +158,25 @@ public class SorterManager extends SimpleSorterBase {
 		return false;
 	}
 
+	public void removeAtCoords(Location location) {
+		String[] tables = {"inputcontainers", "invaliditemchests", "shulkerinputchests", "sorterchest"};
+		
+		for (String table : tables) {
+			try {
+				String sql = "DELETE FROM `" + table + "` WHERE x = ? AND y = ? AND z = ? AND world = ?";
+				PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+				statement.setInt(1, (int) location.getX());
+				statement.setInt(2, (int) location.getY());
+				statement.setInt(3, (int) location.getZ());
+				statement.setString(4, location.getWorld().getName());
+				statement.executeUpdate();
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/**
 	 * Lists the sorters names for a player
 	 * @param playerUUID The player to list for
