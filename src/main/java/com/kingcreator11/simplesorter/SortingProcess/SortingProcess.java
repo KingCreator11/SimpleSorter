@@ -95,6 +95,10 @@ public class SortingProcess extends SimpleSorterBase {
 		int sortingItemIndex = -1;
 		for (int i = 0; i < items.length; i++) {
 			if (exmptIndices.contains(i) || items[i] == null) continue;
+			if (items[i].getItemMeta() instanceof BlockStateMeta) {
+				BlockStateMeta meta = (BlockStateMeta) items[i].getItemMeta();
+				if (meta.getBlockState() instanceof ShulkerBox) continue;
+			}
 			sortingItem = items[i];
 			sortingItemIndex = i;
 		}
