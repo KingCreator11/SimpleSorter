@@ -171,7 +171,7 @@ public class ListenerHandler extends SimpleSorterBase implements Listener {
 		this.onGoingSorters.put(input, runner);
 
 		// Ideally 5 seconds after but can be delayed by lag
-		runner.runTaskTimer(this.plugin, 5*20, 1);
+		runner.runTaskTimer(this.plugin, 5*20, 3);
 	}
 
 	/**
