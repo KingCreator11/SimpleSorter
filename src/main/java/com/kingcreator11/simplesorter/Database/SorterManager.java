@@ -25,6 +25,7 @@ import java.util.List;
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 /**
@@ -256,5 +257,40 @@ public class SorterManager extends SimpleSorterBase {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Gets all sorter containers for a sorter
+	 * @param sorterId
+	 * @return
+	 */
+	public List<DBContainer> getContainers(int sorterId, String table) {
+		List<DBContainer> list = new ArrayList<>();
+
+		try {
+			String sql = "SELECT * FROM `" + table + "` WHERE sorterId = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, sorterId);
+
+			ResultSet result = statement.executeQuery();
+			while (result.next()) {
+				DBContainer container = new DBContainer();
+				container.id = result.getInt("id");
+				container.location = new Location(
+					Bukkit.getWorld(result.getString("world")),
+					result.getInt("x"),
+					result.getInt("y"),
+					result.getInt("z")
+				);
+				container.sorterId = result.getInt("sorterId");
+				list.add(container);
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return list;
 	}
 }

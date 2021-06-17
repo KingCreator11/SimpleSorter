@@ -16,11 +16,14 @@
 
 package com.kingcreator11.simplesorter.Listeners;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
 import com.kingcreator11.simplesorter.Database.DBContainer;
+import com.kingcreator11.simplesorter.SortingProcess.SortingProcess;
 
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
@@ -38,11 +41,60 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Handles all events for this plugin
  */
 public class ListenerHandler extends SimpleSorterBase implements Listener {
+
+	/**
+	 * A map of all the currently on going sorting processes
+	 * Maps the input container to the sorting process
+	 */
+	private Map<DBContainer, SortingProcessRunner> onGoingSorters = new HashMap<>();
+
+	/**
+	 * Begins a sorting process after a few moments and updates it
+	 */
+	private class SortingProcessRunner extends BukkitRunnable {
+
+		/**
+		 * The process used for sorting
+		 */
+		private SortingProcess process;
+
+		/**
+		 * The input container this process is mapped to
+		 */
+		DBContainer input;
+
+		/**
+		 * Creates a new sorting process runner
+		 * @param plugin
+		 * @param input
+		 */
+		public SortingProcessRunner(SimpleSorter plugin, DBContainer input, Inventory inputInv) {
+			process = new SortingProcess(plugin, inputInv, input.sorterId);
+			this.input = input;
+		}
+
+		/**
+		 * Runs and updates the sorting process
+		 */
+		@Override
+		public void run() {
+			// Sort 1 stack of items each tick - very fast but will not create excessive lag
+			process.update();
+			
+			if (process.completed()) {
+				// Process completed! remove ourselves from the map
+				onGoingSorters.remove(input);
+				this.cancel();
+			}
+		}
+	}
 
 	/**
 	 * Creates a new event handler
@@ -79,13 +131,13 @@ public class ListenerHandler extends SimpleSorterBase implements Listener {
 
 		// Loop through containers and check if this is one of them
 		List<DBContainer> containers = this.plugin.inputManager.inputLocations.get(playerUUID);
-		boolean found = false;
+		DBContainer input = null;
 
 		// Not a double chest - normal looping through is fine
 		if (!isDoubleChest) {
 			for (DBContainer container : containers){
 				if (container.location.equals(block.getLocation())) {
-					found = true;
+					input = container;
 					break;
 				}
 			}
@@ -97,18 +149,29 @@ public class ListenerHandler extends SimpleSorterBase implements Listener {
 			Chest right = (Chest) doubleChest.getRightSide();
 			for (DBContainer container : containers){
 				if (container.location.equals(left.getLocation()) || container.location.equals(right.getLocation())) {
-					found = true;
+					input = container;
 					break;
 				}
 			}
 		}
 
 		// The container in question isn't an input container
-		if (!found) return;
+		if (input == null) return;
+
+		// Check if there's already a sorting process occurring for this chest
+		// [The sorting process can handle new items in middle of the sort]
+		if (this.onGoingSorters.containsKey(input)) return;
 
 		// All checks done - this chest is an input chest.
 		player.sendMessage("§2Starting sorting process in 2 seconds");
-		// TODO - implement sorting process
+		player.sendMessage("§6You can still add items - added items will also be sorted");
+
+		// Create sorting process runner and run it
+		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, event.getInventory());
+		this.onGoingSorters.put(input, runner);
+
+		// Ideally 2 seconds aka 40 ticks after but can be delayed by lag
+		runner.runTaskTimer(this.plugin, 40, 1);
 	}
 
 	/**

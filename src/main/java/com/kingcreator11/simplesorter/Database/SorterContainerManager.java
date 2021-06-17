@@ -19,6 +19,8 @@ package com.kingcreator11.simplesorter.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.kingcreator11.simplesorter.SimpleSorter;
 import com.kingcreator11.simplesorter.SimpleSorterBase;
@@ -65,7 +67,9 @@ public class SorterContainerManager extends SimpleSorterBase {
 			statement.setInt(2, (int) location.getY());
 			statement.setInt(3, (int) location.getZ());
 			statement.setString(4, location.getWorld().getName());
-			statement.setInt(5, this.plugin.sorterManager.getSorter(playerUUID, sorter).id);
+			SorterManager.Sorter sorterObj = this.plugin.sorterManager.getSorter(playerUUID, sorter);
+			if (sorterObj == null) return "Unable to find a sorter with that name";
+			statement.setInt(5, sorterObj.id);
 			statement.setString(6, itemId);
 
 			if (statement.executeUpdate() != 1)
@@ -92,6 +96,32 @@ public class SorterContainerManager extends SimpleSorterBase {
 		SorterManager.Sorter sorter = this.plugin.sorterManager.getSorter(container.sorterId);
 		if (!sorter.playerUUID.equals(playerUUID))
 			return "The container at the location does not belongs to someone else's sorter";
+		
+		try {
+			String sql = "DELETE FROM `sorterchest` WHERE id = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, container.id);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to remove sorter due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return "Unable to remove sorter due to an errorr";
+		}
+	}
+
+	/**
+	 * Removes a sorter from the system
+	 * @param location
+	 * @return Whether or not the sorter was removed
+	 */
+	public String removeSorterContainer(Location location) {
+		SorterContainer container = getSorterContainer(location);
+		if (container == null)
+			return "No container found at the location";
 		
 		try {
 			String sql = "DELETE FROM `sorterchest` WHERE id = ?";
@@ -143,5 +173,41 @@ public class SorterContainerManager extends SimpleSorterBase {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Gets all sorter containers for a sorter
+	 * @param sorterId
+	 * @return
+	 */
+	public List<SorterContainer> getSorterContainers(int sorterId) {
+		List<SorterContainer> list = new ArrayList<>();
+
+		try {
+			String sql = "SELECT * FROM `sorterchest` WHERE sorterId = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, sorterId);
+
+			ResultSet result = statement.executeQuery();
+			while (result.next()) {
+				SorterContainer container = new SorterContainer();
+				container.id = result.getInt("id");
+				container.location = new Location(
+					Bukkit.getWorld(result.getString("world")),
+					result.getInt("x"),
+					result.getInt("y"),
+					result.getInt("z")
+				);
+				container.sorterId = result.getInt("sorterId");
+				container.item = result.getString("item");
+				list.add(container);
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return list;
 	}
 }

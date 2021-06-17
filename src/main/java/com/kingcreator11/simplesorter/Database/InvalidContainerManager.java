@@ -105,6 +105,32 @@ public class InvalidContainerManager extends SimpleSorterBase {
 	}
 
 	/**
+	 * Removes an invalid container from the sorter
+	 * @param location
+	 * @return Whether or not the container was removed
+	 */
+	public String removeInvalidContainer(Location location) {
+		DBContainer container = getContainer(location);
+		if (container == null)
+			return "No container found at the location";
+		
+		try {
+			String sql = "DELETE FROM `invaliditemchests` WHERE id = ?";
+			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
+			statement.setInt(1, container.id);
+
+			if (statement.executeUpdate() != 1)
+				return "Unable to remove input due to an error";
+			else
+				return null;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			return "Unable to remove input due to an errorr";
+		}
+	}
+
+	/**
 	 * Gets the container
 	 * @param location
 	 * @return null if not found
