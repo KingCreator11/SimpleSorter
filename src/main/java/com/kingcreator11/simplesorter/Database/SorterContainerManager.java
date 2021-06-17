@@ -60,6 +60,9 @@ public class SorterContainerManager extends SimpleSorterBase {
 	 * @return Whether or not the sorter was added
 	 */
 	public String addSorterContainer(Location location, String sorter, String playerUUID, String itemId) {
+		if (this.plugin.sorterManager.doesContainerExist(location))
+			return "A sorter is already using a container at that location";
+
 		try {
 			String sql = "INSERT INTO `sorterchest` (x, y, z, world, sorterId, item) VALUES (?, ?, ?, ?, ?, ?)";
 			PreparedStatement statement = this.plugin.dbManager.db.prepareStatement(sql);
