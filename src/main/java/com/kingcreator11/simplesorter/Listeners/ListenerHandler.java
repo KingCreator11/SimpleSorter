@@ -163,15 +163,15 @@ public class ListenerHandler extends SimpleSorterBase implements Listener {
 		if (this.onGoingSorters.containsKey(input)) return;
 
 		// All checks done - this chest is an input chest.
-		player.sendMessage("§2Starting sorting process in 2 seconds");
+		player.sendMessage("§2Starting sorting process in 5 seconds");
 		player.sendMessage("§6You can still add items - added items will also be sorted");
 
 		// Create sorting process runner and run it
 		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, event.getInventory());
 		this.onGoingSorters.put(input, runner);
 
-		// Ideally 2 seconds aka 40 ticks after but can be delayed by lag
-		runner.runTaskTimer(this.plugin, 40, 1);
+		// Ideally 5 seconds after but can be delayed by lag
+		runner.runTaskTimer(this.plugin, 5*20, 1);
 	}
 
 	/**

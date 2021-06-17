@@ -31,7 +31,7 @@ Is your server lagging badly due to excessive amounts of hoppers used in massive
 > TODO - Will add screenshots of tps using very large redstone sorters which a large server is likely to have compared to many simple sorters.
 
 ## How the Plugin Works
-All sorters are stored within an sqlite file, deleting this file will cause all player sorters to be deleted and remove functionality. Whenever an item is inputted into an input chest, rather than doing what minecraft does by default which is checking the chests every tick using hoppers, this plugin simply listens to an event listener and waits for 2 seconds then sorts all the items in the chests very quickly. This approach means that there will be no lag when the sorter isn't in use. Since the items are not sorted immediately but quickly instead, even if a player attempts to sort a large amount of items at once the amount of lag will be minimal.
+All sorters are stored within an sqlite file, deleting this file will cause all player sorters to be deleted and remove functionality. Whenever an item is inputted into an input chest, rather than doing what minecraft does by default which is checking the chests every tick using hoppers, this plugin simply listens to an event listener and waits for 5 seconds then sorts all the items in the chests very quickly. This approach means that there will be no lag when the sorter isn't in use. Since the items are not sorted immediately but quickly instead, even if a player attempts to sort a large amount of items at once the amount of lag will be minimal.
 
 > If you have any suggestions for other lag improvements please add them as an issue and add a lag-improvement tag!
 
