@@ -2,7 +2,9 @@
 
 ## Links
 Main Github Link: [https://github.com/KingCreator11/SimpleSorter](https://github.com/KingCreator11/SimpleSorter)
+
 Spigot Resource Page: [https://www.spigotmc.org/resources/simple-sorter-no-lag-redstone-alternative.93402/](https://www.spigotmc.org/resources/simple-sorter-no-lag-redstone-alternative.93402/)
+
 Video Showcasing Plugin: [https://www.youtube.com/watch?v=NgsGzTYryV0](https://www.youtube.com/watch?v=NgsGzTYryV0)
 
 ## License
