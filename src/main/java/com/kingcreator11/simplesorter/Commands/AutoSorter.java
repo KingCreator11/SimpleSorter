@@ -52,14 +52,25 @@ public class AutoSorter extends SubCommand {
 		 */
 		DBContainer input;
 
+		/*
+			we need these if the player deletes the sorter we check to make sure
+			it still exists.
+		*/
+		String sorter;
+		String playerUUID;
+		SimpleSorter plugin;
+
 		/**
 		 * Creates a new sorting process runner
 		 * @param plugin
 		 * @param input
 		 */
-		public SortingProcessRunner(SimpleSorter plugin, DBContainer input, Inventory inputInv) {
+		public SortingProcessRunner(SimpleSorter plugin, DBContainer input, Inventory inputInv, String sorter, String playerUUID) {
 			process = new SortingProcess(plugin, inputInv, input.sorterId);
 			this.input = input;
+			this.sorter = sorter;
+			this.playerUUID = playerUUID;
+			this.plugin = plugin;
 		}
 
 		/**
@@ -69,7 +80,7 @@ public class AutoSorter extends SubCommand {
 		public void run() {
 			// when we turn off autosort we remove the key from onGoingSorters,
 			// so check for the key and if not there close the process.
-			if (onGoingSorters.containsKey(this.input)) 
+			if (onGoingSorters.containsKey(this.input) && this.plugin.sorterManager.getSorter(this.playerUUID, this.sorter) != null) 
 				process.update();
 			else {
 				onGoingSorters.remove(input);
@@ -186,7 +197,7 @@ public class AutoSorter extends SubCommand {
 		player.sendMessage("Auto sorting process will begin in 5 seconds and move one stack every " + args[1] + " seconds.");
 
 		// Create sorting process runner and run it
-		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, ch.getInventory());
+		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, ch.getInventory(), args[0], playerUUID);
 		this.onGoingSorters.put(input, runner);
 
 		// Ideally 5 seconds after but can be delayed by lag
