@@ -100,7 +100,7 @@ public class SimpleSorter extends JavaPlugin {
 		this.commandHandler.addSubCommand("removeshulkerinput", new RemoveShulkerInputCommand(this));
 		this.commandHandler.addSubCommand("sort", new SortCommand(this));
 		this.commandHandler.addSubCommand("removesorter", new RemoveSorterCommand(this));
-		this.commandHandler.addSubCommand("autosort", new AutoSorter(this));
+		this.commandHandler.addSubCommand("autosort", autoManager);
 
 		// Events
 		getServer().getPluginManager().registerEvents(eventsHandler, this);

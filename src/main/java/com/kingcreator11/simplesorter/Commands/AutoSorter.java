@@ -20,6 +20,11 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Container;
+import org.bukkit.block.DoubleChest;
+
+
 
 public class AutoSorter extends SubCommand {
     
@@ -28,7 +33,7 @@ public class AutoSorter extends SubCommand {
 	 * @param plugin
 	 */
 	public AutoSorter(SimpleSorter plugin) {
-		super(plugin, new String[] {"simplesorter.usage"}, SubCommandType.argString);
+		super(plugin, new String[] {"simplesorter.usage"}, SubCommandType.argsList);
 	}
 
 	/*
@@ -64,7 +69,7 @@ public class AutoSorter extends SubCommand {
 		public void run() {
 			// when we turn off autosort we remove the key from onGoingSorters,
 			// so check for the key and if not there close the process.
-			if (this.onGoingSorters.containsKey(this.input)) 
+			if (onGoingSorters.containsKey(this.input)) 
 				process.update();
 			else {
 				onGoingSorters.remove(input);
@@ -114,6 +119,7 @@ public class AutoSorter extends SubCommand {
 			sender.sendMessage("§cPlease point at a container to sort");
 			return;
 		}
+		Container ch = (Container) block.getState(); // make block a chest
 		if (args.length < 2) {
 			sender.sendMessage("§cCommand usage /ss autosort <name> <seconds>");
 			return;
@@ -126,7 +132,7 @@ public class AutoSorter extends SubCommand {
 			sender.sendMessage("§cSeconds must be a valid number.");
 			return;
 		}
-		if (block.getBlockInventory() instanceof DoubleChestInventory) 
+		if (ch.getInventory() instanceof DoubleChestInventory) 
 			isDoubleChest = true;
 
 		/* 
@@ -139,7 +145,7 @@ public class AutoSorter extends SubCommand {
 		// Not a double chest - normal looping through is fine
 		if (!isDoubleChest) {
 			for (DBContainer container : containers){
-				if (container.location.equals(block.getLocation())) {
+				if (container.location.equals(ch.getLocation())) {
 					input = container;
 					break;
 				}
@@ -147,7 +153,7 @@ public class AutoSorter extends SubCommand {
 		}
 		// Double chests need checking for both sides
 		else {
-			DoubleChest doubleChest = (DoubleChest) block.getBlockInventory().getHolder();
+			DoubleChest doubleChest = (DoubleChest) ch.getInventory().getHolder();
 			Chest left = (Chest) doubleChest.getLeftSide();
 			Chest right = (Chest) doubleChest.getRightSide();
 			for (DBContainer container : containers){
@@ -161,7 +167,10 @@ public class AutoSorter extends SubCommand {
 
 
 		// The container in question isn't an input container
-		if (input == null) return;
+		if (input == null) {
+			player.sendMessage("not an input container");	
+			return;
+		}
 
 
 		// Check if there's already a sorting process occurring for this chest
@@ -177,7 +186,7 @@ public class AutoSorter extends SubCommand {
 		player.sendMessage("Auto sorting process will begin in 5 seconds and move one stack every " + args[1] + " seconds.");
 
 		// Create sorting process runner and run it
-		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, block.getBlockInventory());
+		SortingProcessRunner runner = new SortingProcessRunner(this.plugin, input, ch.getInventory());
 		this.onGoingSorters.put(input, runner);
 
 		// Ideally 5 seconds after but can be delayed by lag
