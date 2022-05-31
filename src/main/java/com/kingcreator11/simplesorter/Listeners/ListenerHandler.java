@@ -239,5 +239,6 @@ public class ListenerHandler extends SimpleSorterBase implements Listener {
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
 		this.plugin.inputManager.unloadInputs(event.getPlayer().getUniqueId().toString());
+		this.plugin.autoManager.stop(event.getPlayer().getUniqueId().toString());
 	}
 }

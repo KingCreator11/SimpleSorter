@@ -35,7 +35,7 @@ public class SimpleSorter extends JavaPlugin {
 	/**
 	 * The main events handler
 	 */
-	private ListenerHandler eventsHandler = new ListenerHandler(this);
+	public ListenerHandler eventsHandler = new ListenerHandler(this);
 
 	/**
 	 * The main database manager
@@ -67,6 +67,13 @@ public class SimpleSorter extends JavaPlugin {
 	 */
 	public SorterManager sorterManager = new SorterManager(this);
 
+
+	/**
+	 * Auto sorting functionality.
+	 */
+	public AutoSorter autoManager = new AutoSorter(this);
+	
+
 	/**
 	 * Called when the plugin is enabled - startup process
 	 */
@@ -93,6 +100,7 @@ public class SimpleSorter extends JavaPlugin {
 		this.commandHandler.addSubCommand("removeshulkerinput", new RemoveShulkerInputCommand(this));
 		this.commandHandler.addSubCommand("sort", new SortCommand(this));
 		this.commandHandler.addSubCommand("removesorter", new RemoveSorterCommand(this));
+		this.commandHandler.addSubCommand("autosort", new AutoSorter(this));
 
 		// Events
 		getServer().getPluginManager().registerEvents(eventsHandler, this);
