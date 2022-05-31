@@ -35,7 +35,7 @@ public class SimpleSorter extends JavaPlugin {
 	/**
 	 * The main events handler
 	 */
-	public ListenerHandler eventsHandler = new ListenerHandler(this);
+	private ListenerHandler eventsHandler = new ListenerHandler(this);
 
 	/**
 	 * The main database manager
